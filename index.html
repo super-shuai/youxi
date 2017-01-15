@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>跑酷</title>
+	<script src="js/jquery.js"></script>
+	<script src="js/hitPix.js"></script>
+	<script src="js/game.js"></script>
+	<script src="js/run.js"></script>
+	<script src="bootstrap\js\bootstrap.min.js"></script>
+	<link rel="stylesheet" href="bootstrap\css\bootstrap.min.css">
+</head>
+<style>
+	body{
+		padding: 0;
+		margin: 0;
+		list-style: none;
+		overflow: hidden;
+	}
+	canvas{
+		background: #ccc;
+		background-image:url(img/beijing1.jpg);
+		background-repeat: repeat-x;
+	}
+	.start{
+		width: 30%;
+		height: 40%;
+		position: fixed;
+		top:0;bottom: 0;left: 0;right: 0;
+		margin: auto;
+		border: 3px solid #fff;
+		border-radius: 5px;
+		box-shadow: 0 0 10px #000;
+		z-index:10;
+		text-align: center;
+		animation:start 2s ease;
+	}
+
+	@keyframes start{
+		0%{
+			transform:translate(0,-1000px);
+		}
+		100%{
+			transform:translate(0,0);
+		}
+
+	} 
+	@keyframes start1{
+		0%{
+			transform:translate(0,0);
+		}
+		100%{
+			transform:translate(0,-1000px);
+		}
+	}
+	.mask{
+		width: 100%;
+		height: 100%;
+		position: fixed;
+		top:0;bottom: 0;
+		margin: auto;
+		/*background: rgba(0,0,0,.5);*/
+		z-index: 5;
+		animation:mask 2s ease forwards;
+	}
+	@keyframes mask{
+		0%{
+			background: rgba(0,0,0,.2);
+		}
+		100%{
+			background: rgba(0,0,0,.6)
+		}
+	}
+	@keyframes mask1{
+		0%{
+			background: rgba(0,0,0,.6);
+		}
+		100%{
+			background: rgba(0,0,0,0)
+		}
+	}
+
+	.over{
+		width: 30%;
+		height: 40%;
+		position: fixed;
+		top:0;bottom: 0;left: 0;right: 0;
+		margin: auto;
+		border: 3px solid #fff;
+		border-radius: 5px;
+		box-shadow: 0 0 10px #000;
+		z-index:10;
+		text-align: center;
+		transform:translate(0,-1000px);
+	}
+	.info{
+		width:100%;
+		height: 50px;
+		background:#BD3B47;
+		position: fixed;
+		bottom:0;left: 0;
+		padding:0 40px;
+	}
+	.info p{
+		width: 33%;
+		line-height: 50px;
+		font-size:30px;
+		color: #ccc;
+		float: left;
+	}
+	.jingdu{
+		display:inline-block;
+		width: 210px;
+		height: 40px;
+		border: 1px solid #ccc;
+	}
+	.pressage{
+		display: inline-block;
+		width:100%;
+		height:100%;
+		background:green;
+	}
+</style>
+<script>
+	window.onload=function(){
+		var clientWidth=document.documentElement.clientWidth;
+		var clientHeight=document.documentElement.clientHeight;
+		var canvas=document.querySelector("canvas");
+		canvas.width=clientWidth;
+		canvas.height=clientHeight;
+		var cobj=canvas.getContext("2d");
+		var runs=document.querySelectorAll(".run");  //获取图片
+		var jumps=document.querySelectorAll(".jump");  //获取图片
+		var hinderImg=document.querySelectorAll(".hinder");
+
+		var back=document.getElementsByClassName("back")[0];
+		// var back=document.getElementsByClassName("run")[0];
+		// var back=document.getElementsByClassName("peng")[0];
+		// var back=document.getElementsByClassName("zidan")[0];
+		var pressage=document.getElementsByClassName("pressage")[0];
+		var grad=document.getElementsByClassName("grad")[0];
+		var distance=document.getElementsByClassName("distance")[0];
+		
+		var gameObj=new game(canvas,cobj,runs,jumps,hinderImg,back,pressage,grad,distance);	
+		$(".btn:eq(0)").one("click",function(){
+			$(".start").css("animation","start1 2s ease forwards");
+			$(".mask").css("animation","mask1 2s ease forwards");
+			gameObj.play();
+		})
+	}
+</script>
+<body>
+	<canvas></canvas>
+	<div class="info">
+		<p>分数:<i class="grad">0</i></p>
+		<p>生命值: <span class="jingdu"><i class="pressage"></i></span> </p>
+		<p>共跑<i class="distance">0</i>米</p>
+	</div>
+	<audio src="audio/back.wav" class="back" loop="loop"></audio>
+	<audio src="audio/pao.wav" class="pao"></audio>
+	<audio src="audio/peng.wav" class="peng"></audio>
+	<audio src="audio/zidan.wav" class="zidan"></audio>
+	<div class="start">
+		<div class="welcome">
+			酷跑
+		</div>
+		<button type="button" class="btn btn-success">开始游戏</button>
+	</div>
+
+	<div class="over">
+		<div class="welcome text-center again">
+			GAME OVER! 当前分数：<span class="scoreEle">0</span>
+		</div>
+		<ul>
+			
+		</ul>
+		<button type="button" class="btn btn-success">再来一次</button>
+	</div>
+
+ 	<div class="mask"></div>
+	<img src="img/run1.png" alt="" hidden class="run">
+	<img src="img/run2.png" alt="" hidden class="run">
+	<img src="img/run3.png" alt="" hidden class="run">
+	<img src="img/run4.png" alt="" hidden class="run">
+	<img src="img/run5.png" alt="" hidden class="run">
+	<img src="img/run6.png" alt="" hidden class="run">
+	<img src="img/run7.png" alt="" hidden class="run">
+	<img src="img/run8.png" alt="" hidden class="run">
+	<img src="img/jump.png" alt="" hidden class="jump">
+	<img src="img/beijing1.jpg" alt="" hidden>
+
+	<img src="img/hinder1.png" alt="" hidden class="hinder">
+	<img src="img/hinder2.png" alt="" hidden class="hinder">
+	<img src="img/hinder3.png" alt="" hidden class="hinder">
+	<img src="img/hinder4.png" alt="" hidden class="hinder">
+	<img src="img/hinder5.png" alt="" hidden class="hinder">
+	<img src="img/hinder6.png" alt="" hidden class="hinder">
+
+	
+</body>
+</html>
